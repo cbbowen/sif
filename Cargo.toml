@@ -1,0 +1,15 @@
+[package]
+name = "sif"
+version = "0.1.0"
+authors = ["Chris Bowen <4783294+cbbowen@users.noreply.github.com>"]
+license = "MIT"
+edition = "2018"
+
+[features]
+sif_index_niche = []
+
+[dependencies]
+itertools = "0.10.*"
+
+[dev-dependencies]
+proptest = "0.10.*"
