@@ -113,10 +113,8 @@ impl ImmutableOutAdjacencyList {
 		map::Unwrap<G::EphemeralEdgeMap<'_, Option<Edge>>>,
 	) {
 		let mut vmap = from.ephemeral_vert_map(None);
-		let mut order = 0usize;
-		for v in from.verts() {
+		for (order, v) in from.verts().enumerate() {
 			*vmap.get_mut(v) = Some(order.into());
-			order += 1;
 		}
 		let mut emap = from.ephemeral_edge_map(None);
 		let mut outs = dense::Domain::default();

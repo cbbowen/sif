@@ -280,7 +280,7 @@ pub trait Digraph {
 				return false;
 			}
 		}
-		return true;
+		true
 	}
 }
 

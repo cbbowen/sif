@@ -1,4 +1,4 @@
-use crate::Digraph;
+use crate::{adjacencies::InAdjacencies, DepthFirst, Digraph};
 use std::borrow::Borrow;
 
 /// Represents a directed graph in which the in-adjacencies of vertices can be
@@ -20,6 +20,11 @@ pub trait InGraph: Digraph {
 	/// assert!(g.in_edges(head).any(|d| d == e));
 	/// ```
 	fn in_edges(&self, v: impl Borrow<Self::Vert>) -> Self::InEdges<'_>;
+
+	/// Returns an iterator that performs a depth-first traverals.
+	fn depth_first_in(&self) -> DepthFirst<'_, Self, InAdjacencies> {
+		DepthFirst::new(self)
+	}
 }
 
 /// Represents a directed graph in which the in-degree of vertices is known.

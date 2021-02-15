@@ -21,6 +21,8 @@
 #![feature(generic_associated_types)]
 #![cfg_attr(sif_index_niche, feature(rustc_attrs))]
 
+pub mod adjacencies;
+mod depth_first;
 mod digraph;
 mod in_graph;
 mod insert_graph;
@@ -28,6 +30,8 @@ pub mod map;
 mod model;
 mod out_graph;
 
+pub use adjacencies::*;
+pub use depth_first::*;
 pub use digraph::{Digraph, ExactOrderDigraph, ExactSizeDigraph};
 pub use in_graph::InGraph;
 pub use insert_graph::InsertGraph;

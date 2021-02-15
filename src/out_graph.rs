@@ -1,4 +1,4 @@
-use crate::Digraph;
+use crate::{adjacencies::OutAdjacencies, DepthFirst, Digraph};
 use std::borrow::Borrow;
 
 /// Represents a directed graph in which the out-adjacencies of vertices can be
@@ -20,6 +20,11 @@ pub trait OutGraph: Digraph {
 	/// assert!(g.out_edges(tail).any(|d| d == e));
 	/// ```
 	fn out_edges(&self, v: impl Borrow<Self::Vert>) -> Self::OutEdges<'_>;
+
+	/// Returns an iterator that performs a depth-first traverals.
+	fn depth_first_out(&self) -> DepthFirst<'_, Self, OutAdjacencies> {
+		DepthFirst::new(self)
+	}
 }
 
 /// Represents a directed graph in which the out-degree of vertices is known.
