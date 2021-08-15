@@ -116,8 +116,8 @@ mod tests {
 	proptest! {
 		#[test]
 		fn ismorphic_from(g: TestGraph) {
-			let (g_prime, vmap, emap) = SparseOutAdjacencyList::isomorphic_from(&g);
-			assert!(g.is_isomorphic_with_maps(&g_prime, &vmap, &emap));
+			let (g_prime, homomorphism) = SparseOutAdjacencyList::isomorphic_from(&g);
+			assert!(g.is_isomorphic_with_maps(&g_prime, homomorphism.vert_map(), homomorphism.edge_map()));
 		}
 
 		#[test]

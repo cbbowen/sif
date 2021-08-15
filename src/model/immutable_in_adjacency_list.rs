@@ -7,7 +7,7 @@ use std::ops::Range;
 
 use crate::{
 	map::{self, Map, MapMut},
-	Digraph, InGraph,
+	Digraph, Homomorphism, InGraph,
 };
 
 use super::dense::{self, Key};
@@ -105,13 +105,7 @@ impl ImmutableInAdjacencyList {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: InGraph>(
-		from: &G,
-	) -> (
-		Self,
-		map::Unwrap<G::EphemeralVertMap<'_, Option<Vert>>>,
-		map::Unwrap<G::EphemeralEdgeMap<'_, Option<Edge>>>,
-	) {
+	fn isomorphic_from<G: InGraph>(from: &G) -> (Self, Homomorphism<'_, G, Self>) {
 		let mut vmap = from.ephemeral_vert_map(None);
 		for (order, v) in from.verts().enumerate() {
 			*vmap.get_mut(v) = Some(order.into());
@@ -130,7 +124,10 @@ impl ImmutableInAdjacencyList {
 		}
 		ins.insert(tails.len().into());
 		let g = ImmutableInAdjacencyList { ins, tails };
-		(g, map::Unwrap::new(vmap), map::Unwrap::new(emap))
+		(
+			g,
+			Homomorphism::new(map::Unwrap::new(vmap), map::Unwrap::new(emap)),
+		)
 	}
 }
 
@@ -150,8 +147,8 @@ mod tests {
 		#[test]
 		fn isomorphic_from(g: TestGraph) {
 			let g_in = crate::DenseInAdjacencyList::from(&g);
-			let (g_prime, vmap, emap) = ImmutableInAdjacencyList::isomorphic_from(&g_in);
-			assert!(g_in.is_isomorphic_with_maps(&g_prime, &vmap, &emap));
+			let (g_prime, homomorphism) = ImmutableInAdjacencyList::isomorphic_from(&g_in);
+			assert!(g_in.is_isomorphic_with_maps(&g_prime, homomorphism.vert_map(), homomorphism.edge_map()));
 		}
 
 		#[test]

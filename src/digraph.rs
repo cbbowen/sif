@@ -248,7 +248,7 @@ pub trait Digraph {
 		let mut gverts = std::collections::HashSet::new();
 		for v in self.verts() {
 			// `vert_map` is surjective.
-			let inserted = gverts.insert(vert_map.get(v).clone());
+			let inserted = gverts.insert(*vert_map.get(v));
 			debug_assert!(inserted);
 		}
 		// `vert_map` is injective.
@@ -262,7 +262,7 @@ pub trait Digraph {
 		let mut gedges = std::collections::HashSet::new();
 		for e in self.edges() {
 			// `edge_map` is surjective.
-			let inserted = gedges.insert(edge_map.get(e).clone());
+			let inserted = gedges.insert(*edge_map.get(e));
 			debug_assert!(inserted);
 		}
 		// `edge_map` is injective.

@@ -24,6 +24,7 @@
 pub mod adjacencies;
 mod depth_first;
 mod digraph;
+mod homomorphism;
 mod in_graph;
 mod insert_graph;
 pub mod map;
@@ -33,6 +34,7 @@ mod out_graph;
 pub use adjacencies::*;
 pub use depth_first::*;
 pub use digraph::{Digraph, ExactOrderDigraph, ExactSizeDigraph};
+pub use homomorphism::*;
 pub use in_graph::InGraph;
 pub use insert_graph::InsertGraph;
 pub use map::{Map, MapMut};

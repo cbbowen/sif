@@ -8,7 +8,7 @@ pub trait Adjacencies<G: Digraph + ?Sized> {
 	type Of<'a>: Clone + Iterator<Item = G::Edge>;
 
 	/// Returns edges adjacent to a vertes.
-	fn of<'a>(g: &G, v: G::Vert) -> Self::Of<'_>;
+	fn of(g: &G, v: G::Vert) -> Self::Of<'_>;
 
 	/// Returns the vertex from which an edge is an adjacency, that is
 	/// `e ∈ of(from(e))` should hold.
@@ -25,7 +25,7 @@ pub struct OutAdjacencies;
 impl<G: OutGraph + ?Sized> Adjacencies<G> for OutAdjacencies {
 	type Of<'a> = G::OutEdges<'a>;
 
-	fn of<'a>(g: &G, v: G::Vert) -> Self::Of<'_> {
+	fn of(g: &G, v: G::Vert) -> Self::Of<'_> {
 		g.out_edges(v)
 	}
 
@@ -44,7 +44,7 @@ pub struct InAdjacencies;
 impl<G: InGraph + ?Sized> Adjacencies<G> for InAdjacencies {
 	type Of<'a> = G::InEdges<'a>;
 
-	fn of<'a>(g: &'a G, v: G::Vert) -> Self::Of<'a> {
+	fn of(g: &G, v: G::Vert) -> Self::Of<'_> {
 		g.in_edges(v)
 	}
 

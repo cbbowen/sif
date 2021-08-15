@@ -7,7 +7,7 @@ use std::ops::Range;
 
 use crate::{
 	map::{self, Map, MapMut},
-	Digraph, OutGraph,
+	Digraph, Homomorphism, OutGraph,
 };
 
 use super::dense::{self, Key};
@@ -105,13 +105,7 @@ impl ImmutableOutAdjacencyList {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: OutGraph>(
-		from: &G,
-	) -> (
-		Self,
-		map::Unwrap<G::EphemeralVertMap<'_, Option<Vert>>>,
-		map::Unwrap<G::EphemeralEdgeMap<'_, Option<Edge>>>,
-	) {
+	fn isomorphic_from<G: OutGraph>(from: &G) -> (Self, Homomorphism<G, Self>) {
 		let mut vmap = from.ephemeral_vert_map(None);
 		for (order, v) in from.verts().enumerate() {
 			*vmap.get_mut(v) = Some(order.into());
@@ -130,7 +124,10 @@ impl ImmutableOutAdjacencyList {
 		}
 		outs.insert(heads.len().into());
 		let g = ImmutableOutAdjacencyList { outs, heads };
-		(g, map::Unwrap::new(vmap), map::Unwrap::new(emap))
+		(
+			g,
+			Homomorphism::new(map::Unwrap::new(vmap), map::Unwrap::new(emap)),
+		)
 	}
 }
 
@@ -150,8 +147,8 @@ mod tests {
 		#[test]
 		fn isomorphic_from(g: TestGraph) {
 			let g_out = crate::DenseOutAdjacencyList::from(&g);
-			let (g_prime, vmap, emap) = ImmutableOutAdjacencyList::isomorphic_from(&g_out);
-			assert!(g_out.is_isomorphic_with_maps(&g_prime, &vmap, &emap));
+			let (g_prime, homomorphism) = ImmutableOutAdjacencyList::isomorphic_from(&g_out);
+			assert!(g_out.is_isomorphic_with_maps(&g_prime, homomorphism.vert_map(), homomorphism.edge_map()));
 		}
 
 		#[test]

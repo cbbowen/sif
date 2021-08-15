@@ -3,6 +3,8 @@ use super::{
 	Digraph,
 };
 
+use crate::Homomorphism;
+
 /// Represents a directed graph into which new vertices and edge can be
 /// inserted.
 pub trait InsertGraph: Default + Digraph {
@@ -20,13 +22,7 @@ pub trait InsertGraph: Default + Digraph {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: Digraph>(
-		from: &G,
-	) -> (
-		Self,
-		map::Unwrap<G::EphemeralVertMap<'_, Option<Self::Vert>>>,
-		map::Unwrap<G::EphemeralEdgeMap<'_, Option<Self::Edge>>>,
-	) {
+	fn isomorphic_from<G: Digraph>(from: &G) -> (Self, Homomorphism<'_, G, Self>) {
 		let mut to = Self::default();
 		let mut vmap = from.ephemeral_vert_map(None);
 		for v in from.verts() {
@@ -40,6 +36,9 @@ pub trait InsertGraph: Default + Digraph {
 				vmap.get(head).expect("head in verts"),
 			));
 		}
-		(to, map::Unwrap::new(vmap), map::Unwrap::new(emap))
+		(
+			to,
+			Homomorphism::new(map::Unwrap::new(vmap), map::Unwrap::new(emap)),
+		)
 	}
 }
