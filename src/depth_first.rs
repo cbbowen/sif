@@ -135,6 +135,7 @@ mod tests {
 			// Every vertex and edge should have been visited.
 			assert_eq!(g.verts().collect::<HashSet<_>>(), vs);
 			assert_eq!(g.edges().collect::<HashSet<_>>(), es);
+			assert_eq!(stack.len(), 0);
 		}
 
 		#[test]
@@ -177,6 +178,7 @@ mod tests {
 			// Every vertex and edge should have been visited.
 			assert_eq!(g.verts().collect::<HashSet<_>>(), vs);
 			assert_eq!(g.edges().collect::<HashSet<_>>(), es);
+			assert_eq!(stack.len(), 0);
 		}
 	}
 }
