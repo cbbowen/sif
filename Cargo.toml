@@ -12,4 +12,9 @@ sif_index_niche = []
 itertools = "0.10.*"
 
 [dev-dependencies]
+criterion = "0.3"
 proptest = "0.10.*"
+
+[[bench]]
+name = "bench"
+harness = false
