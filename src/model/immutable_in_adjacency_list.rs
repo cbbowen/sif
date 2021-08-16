@@ -42,22 +42,43 @@ pub struct ImmutableInAdjacencyList {
 	tails: dense::Domain<Edge, Vert>,
 }
 
+impl ImmutableInAdjacencyList {
+	fn _endpoints(&self, e: Edge) -> (Vert, Vert) {
+		(self._tail(e), self._head(e))
+	}
+
+	fn _tail(&self, e: Edge) -> Vert {
+		self.tails[e]
+	}
+
+	fn _head(&self, e: Edge) -> Vert {
+		(self.ins.values().partition_point(|q| *q <= e) - 1).into()
+	}
+
+	fn _in_edges(&self, v: Vert) -> InEdges<'_> {
+		let start = self.ins[v].index();
+		let end = self.ins[(v.index() + 1).into()].index();
+		(start..end).map_into::<Edge>()
+	}
+}
+
 impl Digraph for ImmutableInAdjacencyList {
 	type Vert = Vert;
 	type Edge = Edge;
 
+	#[inline]
 	fn endpoints(&self, e: impl Borrow<Self::Edge>) -> (Self::Vert, Self::Vert) {
-		let e = e.borrow();
-		(self.tail(e), self.head(e))
+		self._endpoints(*e.borrow())
 	}
 
+	#[inline]
 	fn tail(&self, e: impl Borrow<Self::Edge>) -> Self::Vert {
-		self.tails[*e.borrow()]
+		self._tail(*e.borrow())
 	}
 
+	#[inline]
 	fn head(&self, e: impl Borrow<Self::Edge>) -> Self::Vert {
-		let e = e.borrow();
-		(self.ins.values().partition_point(|q| q <= e) - 1).into()
+		self._head(*e.borrow())
 	}
 
 	type Verts<'a> = Verts<'a>;
@@ -93,11 +114,10 @@ impl Digraph for ImmutableInAdjacencyList {
 
 impl InGraph for ImmutableInAdjacencyList {
 	type InEdges<'a> = InEdges<'a>;
+
+	#[inline]
 	fn in_edges(&self, v: impl Borrow<Self::Vert>) -> Self::InEdges<'_> {
-		let v = v.borrow();
-		let start = self.ins[*v].index();
-		let end = self.ins[(v.index() + 1).into()].index();
-		(start..end).map_into::<Edge>()
+		self._in_edges(*v.borrow())
 	}
 }
 

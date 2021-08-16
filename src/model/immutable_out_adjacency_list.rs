@@ -42,22 +42,43 @@ pub struct ImmutableOutAdjacencyList {
 	heads: dense::Domain<Edge, Vert>,
 }
 
+impl ImmutableOutAdjacencyList {
+	fn _endpoints(&self, e: Edge) -> (Vert, Vert) {
+		(self._tail(e), self._head(e))
+	}
+
+	fn _tail(&self, e: Edge) -> Vert {
+		(self.outs.values().partition_point(|q| *q <= e) - 1).into()
+	}
+
+	fn _head(&self, e: Edge) -> Vert {
+		self.heads[e]
+	}
+
+	fn _out_edges(&self, v: Vert) -> OutEdges<'_> {
+		let start = self.outs[v].index();
+		let end = self.outs[(v.index() + 1).into()].index();
+		(start..end).map_into::<Edge>()
+	}
+}
+
 impl Digraph for ImmutableOutAdjacencyList {
 	type Vert = Vert;
 	type Edge = Edge;
 
+	#[inline]
 	fn endpoints(&self, e: impl Borrow<Self::Edge>) -> (Self::Vert, Self::Vert) {
-		let e = e.borrow();
-		(self.tail(e), self.head(e))
+		self._endpoints(*e.borrow())
 	}
 
+	#[inline]
 	fn tail(&self, e: impl Borrow<Self::Edge>) -> Self::Vert {
-		let e = e.borrow();
-		(self.outs.values().partition_point(|q| q <= e) - 1).into()
+		self._tail(*e.borrow())
 	}
 
+	#[inline]
 	fn head(&self, e: impl Borrow<Self::Edge>) -> Self::Vert {
-		self.heads[*e.borrow()]
+		self._head(*e.borrow())
 	}
 
 	type Verts<'a> = Verts<'a>;
@@ -93,11 +114,10 @@ impl Digraph for ImmutableOutAdjacencyList {
 
 impl OutGraph for ImmutableOutAdjacencyList {
 	type OutEdges<'a> = OutEdges<'a>;
+
+	#[inline]
 	fn out_edges(&self, v: impl Borrow<Self::Vert>) -> Self::OutEdges<'_> {
-		let v = v.borrow();
-		let start = self.outs[*v].index();
-		let end = self.outs[(v.index() + 1).into()].index();
-		(start..end).map_into::<Edge>()
+		self._out_edges(*v.borrow())
 	}
 }
 
