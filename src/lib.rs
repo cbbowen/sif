@@ -16,7 +16,6 @@
 //! | `SparseBiAdjacencyList`     | **Yes**       | **Yes**    | **Yes**   | **Yes**       | **Yes**       |
 
 #![warn(missing_docs)]
-#![allow(incomplete_features)]
 #![feature(associated_type_defaults)]
 #![feature(generic_associated_types)]
 #![cfg_attr(sif_index_niche, feature(rustc_attrs))]
