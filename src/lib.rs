@@ -18,19 +18,22 @@
 #![warn(missing_docs)]
 #![feature(associated_type_defaults)]
 #![feature(generic_associated_types)]
+#![feature(map_first_last)]
 #![cfg_attr(sif_index_niche, feature(rustc_attrs))]
 
 pub mod adjacencies;
+pub(crate) mod binary_heap;
 mod depth_first;
 mod digraph;
 mod homomorphism;
 mod in_graph;
 mod insert_graph;
 pub mod map;
-mod model;
+pub(crate) mod model;
 mod out_graph;
 
 pub use adjacencies::*;
+pub(crate) use binary_heap::BinaryHeap;
 pub use depth_first::*;
 pub use digraph::{Digraph, ExactOrderDigraph, ExactSizeDigraph};
 pub use homomorphism::*;

@@ -5,7 +5,7 @@ pub mod dense_in_adjacency_list;
 pub mod dense_out_adjacency_list;
 pub mod immutable_in_adjacency_list;
 pub mod immutable_out_adjacency_list;
-mod index;
+pub(crate) mod index;
 mod key;
 mod sparse;
 pub mod sparse_bi_adjacency_list;
