@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use crate::{Adjacencies, Digraph, Map, MapMut};
 
 /// Step of a depth-first graph traversal.
@@ -61,7 +63,7 @@ impl<'a, G: Digraph + ?Sized, Adj: Adjacencies<G>> Iterator for DepthFirst<'a, G
 		if let Some(frame) = self.stack.last_mut() {
 			if let Some(e) = frame.1.next() {
 				let v = Adj::from(self.graph, e);
-				let v_visited = *visited.get(v);
+				let v_visited = *visited.get(v).borrow();
 				match v_visited {
 					No => {
 						*visited.get_mut(v) = Open;
@@ -79,7 +81,7 @@ impl<'a, G: Digraph + ?Sized, Adj: Adjacencies<G>> Iterator for DepthFirst<'a, G
 				Some(EndTree)
 			}
 		} else {
-			let v = self.vert_iter.find(|v| *visited.get(*v) == No)?;
+			let v = self.vert_iter.find(|v| *visited.get(*v).borrow() == No)?;
 			*visited.get_mut(v) = Open;
 			self.stack.push((None, Adj::of(self.graph, v)));
 			Some(StartTree(v))

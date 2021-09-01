@@ -84,7 +84,7 @@ pub trait Digraph {
 	fn edges(&self) -> Self::Edges<'_>;
 
 	/// A mutable map from vertices to values.
-	type VertMap<T: Clone>: MapMut<Self::Vert, T>;
+	type VertMap<T: Clone>: MapMut<Self::Vert, Value = T>;
 
 	/// Constructs a new mutable mapping from vertices to values with all vertices
 	/// initially mapped to the given default.
@@ -119,7 +119,7 @@ pub trait Digraph {
 	}
 
 	/// A mutable map from edges to values.
-	type EdgeMap<T: Clone>: MapMut<Self::Edge, T>;
+	type EdgeMap<T: Clone>: MapMut<Self::Edge, Value = T>;
 
 	/// Constructs a new mutable mapping from edges to values with all edges
 	/// initially mapped to the given default.
@@ -159,7 +159,7 @@ pub trait Digraph {
 
 	/// A mutable map from vertices to values that requires the graph remain
 	/// immutable for its lifetime.
-	type EphemeralVertMap<'a, T: Clone>: MapMut<Self::Vert, T> = Self::VertMap<T>;
+	type EphemeralVertMap<'a, T: Clone>: MapMut<Self::Vert, Value = T> = Self::VertMap<T>;
 
 	/// Constructs a new mutable mapping from vertices to values with all vertices
 	/// initially mapped to the given default. The mapping may not outlive the
@@ -197,7 +197,7 @@ pub trait Digraph {
 
 	/// A mutable map from edges to values that requires the graph remain
 	/// immutable for its lifetime.
-	type EphemeralEdgeMap<'a, T: Clone>: MapMut<Self::Edge, T> = Self::EdgeMap<T>;
+	type EphemeralEdgeMap<'a, T: Clone>: MapMut<Self::Edge, Value = T> = Self::EdgeMap<T>;
 
 	/// Constructs a new mutable mapping from edges to values with all edges
 	/// initially mapped to the given default. The mapping may not outlive the
@@ -241,14 +241,14 @@ pub trait Digraph {
 	fn is_isomorphic_with_maps<G: Digraph>(
 		&self,
 		g: &G,
-		vert_map: &impl Map<Self::Vert, G::Vert>,
-		edge_map: &impl Map<Self::Edge, G::Edge>,
+		vert_map: &impl Map<Self::Vert, Value = G::Vert>,
+		edge_map: &impl Map<Self::Edge, Value = G::Edge>,
 	) -> bool {
 		// `vert_map` is a function.
 		let mut gverts = std::collections::HashSet::new();
 		for v in self.verts() {
 			// `vert_map` is surjective.
-			let inserted = gverts.insert(*vert_map.get(v));
+			let inserted = gverts.insert(*vert_map.get(v).borrow());
 			debug_assert!(inserted);
 		}
 		// `vert_map` is injective.
@@ -262,7 +262,7 @@ pub trait Digraph {
 		let mut gedges = std::collections::HashSet::new();
 		for e in self.edges() {
 			// `edge_map` is surjective.
-			let inserted = gedges.insert(*edge_map.get(e));
+			let inserted = gedges.insert(*edge_map.get(e).borrow());
 			debug_assert!(inserted);
 		}
 		// `edge_map` is injective.
@@ -275,8 +275,8 @@ pub trait Digraph {
 		// `edge_map` preserve endpoints.
 		for e in self.edges() {
 			let (s, t) = self.endpoints(e);
-			let (gs, gt) = g.endpoints(*edge_map.get(e));
-			if *vert_map.get(s) != gs || *vert_map.get(t) != gt {
+			let (gs, gt) = g.endpoints(*edge_map.get(e).borrow());
+			if *vert_map.get(s).borrow() != gs || *vert_map.get(t).borrow() != gt {
 				return false;
 			}
 		}

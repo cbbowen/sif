@@ -80,7 +80,8 @@ impl<K: Key, T: Clone> Map<K, T> {
 	}
 }
 
-impl<K: Key, T: Clone> crate::Map<K, T> for Map<K, T> {
+impl<K: Key, T: Clone> crate::Map<K> for Map<K, T> {
+	type Value = T;
 	type Ref<'a>
 	where
 		T: 'a,
@@ -94,7 +95,7 @@ impl<K: Key, T: Clone> crate::Map<K, T> for Map<K, T> {
 	}
 }
 
-impl<K: Key, T: Clone> crate::MapMut<K, T> for Map<K, T> {
+impl<K: Key, T: Clone> crate::MapMut<K> for Map<K, T> {
 	type RefMut<'a>
 	where
 		T: 'a,

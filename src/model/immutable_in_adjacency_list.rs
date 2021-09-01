@@ -139,7 +139,7 @@ impl ImmutableInAdjacencyList {
 				let tail = from.tail(e);
 				let e_prime = tails.len().into();
 				*emap.get_mut(e) = Some(e_prime);
-				tails.insert(vmap.get(tail).expect("tail in verts"));
+				tails.insert(vmap.get(tail).borrow().expect("tail in verts"));
 			}
 		}
 		ins.insert(tails.len().into());

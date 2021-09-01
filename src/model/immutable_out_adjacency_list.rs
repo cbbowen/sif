@@ -139,7 +139,7 @@ impl ImmutableOutAdjacencyList {
 				let head = from.head(e);
 				let e_prime = heads.len().into();
 				*emap.get_mut(e) = Some(e_prime);
-				heads.insert(vmap.get(head).expect("head in verts"));
+				heads.insert(vmap.get(head).borrow().expect("head in verts"));
 			}
 		}
 		outs.insert(heads.len().into());

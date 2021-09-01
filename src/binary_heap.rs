@@ -1,7 +1,7 @@
 use crate::model::index::Index;
 use crate::MapMut;
+use std::borrow::Borrow;
 use std::marker::PhantomData;
-use std::ops::Deref;
 
 pub struct BinaryHeap<K, T, M> {
 	heap: Vec<Option<(K, T)>>,
@@ -9,7 +9,7 @@ pub struct BinaryHeap<K, T, M> {
 	_phantom_data: PhantomData<T>,
 }
 
-impl<K: Clone, T: Ord, M: MapMut<K, Option<Index>>> BinaryHeap<K, T, M> {
+impl<K: Clone, T: Ord, M: MapMut<K, Value = Option<Index>>> BinaryHeap<K, T, M> {
 	/// Constructs a new binary heap.
 	pub fn new(map: M) -> Self {
 		BinaryHeap {
@@ -82,7 +82,7 @@ impl<K: Clone, T: Ord, M: MapMut<K, Option<Index>>> BinaryHeap<K, T, M> {
 
 	/// If an item already exists and has a value not greater than `value`, return false. Otherwise, decreases the value or adds a new item.
 	pub fn try_decrease(&mut self, key: K, value: T) -> bool {
-		let index = if let Some(index) = self.map.get(key.clone()).deref() {
+		let index = if let Some(index) = self.map.get(key.clone()).borrow() {
 			let index = index.index();
 			if self.heap[index].as_ref().unwrap().1 <= value {
 				return false;
@@ -134,7 +134,8 @@ mod tests {
 		}
 	}
 
-	impl<K: Eq + Hash, T: Clone> crate::Map<K, T> for TestMap<K, T> {
+	impl<K: Eq + Hash, T: Clone> crate::Map<K> for TestMap<K, T> {
+		type Value = T;
 		type Ref<'a>
 		where
 			T: 'a,
@@ -147,7 +148,7 @@ mod tests {
 		}
 	}
 
-	impl<K: Eq + Hash, T: Clone> crate::MapMut<K, T> for TestMap<K, T> {
+	impl<K: Eq + Hash, T: Clone> crate::MapMut<K> for TestMap<K, T> {
 		type RefMut<'a>
 		where
 			T: 'a,

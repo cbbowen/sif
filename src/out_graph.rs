@@ -32,7 +32,7 @@ pub trait OutGraph: Digraph {
 	/// Returns a map from target vertices to the total cost of the shortest path from the given source and the last edge in that path. Assumes `d + costs.get(e) >= d` for every edge `e` in the graph and `d: D`.
 	fn dijkstra<C: Clone, D: Clone + Ord>(
 		&self,
-		costs: &impl Map<Self::Edge, C>,
+		costs: &impl Map<Self::Edge, Value = C>,
 		source: Self::Vert,
 		zero: D,
 	) -> Self::EphemeralVertMap<'_, Option<D>>
@@ -46,8 +46,10 @@ pub trait OutGraph: Digraph {
 			*distances.get_mut(v) = Some(d.clone());
 			for e in self.out_edges(v) {
 				let u = self.head(e);
-				if distances.get(u).is_some() { continue; }
-				queue.try_decrease(u, d.clone() + costs.get(e).clone());
+				if distances.get(u).borrow().is_some() {
+					continue;
+				}
+				queue.try_decrease(u, d.clone() + costs.get(e).borrow().clone());
 			}
 		}
 		distances
@@ -79,32 +81,44 @@ mod tests {
 	struct TestCost<C, E>(C, E);
 
 	#[derive(Debug, Clone, Copy)]
-	struct TestDistance<C, E>(C, Option<E>);
+	struct TestDistance<C, E> {
+		cost: C,
+		pred: Option<E>,
+	}
 
 	impl<C: PartialEq, E> PartialEq for TestDistance<C, E> {
 		fn eq(&self, other: &Self) -> bool {
-			self.0.eq(&other.0)
+			self.cost.eq(&other.cost)
 		}
 	}
 
 	impl<C: Eq, E> Eq for TestDistance<C, E> {}
 
+	impl<C, E> TestDistance<C, E> {
+		fn new(cost: C) -> Self {
+			TestDistance { cost, pred: None }
+		}
+	}
+
 	impl<C: PartialOrd, E> PartialOrd for TestDistance<C, E> {
 		fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-			self.0.partial_cmp(&other.0)
+			self.cost.partial_cmp(&other.cost)
 		}
 	}
 
 	impl<C: Ord, E> Ord for TestDistance<C, E> {
 		fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-			self.0.cmp(&other.0)
+			self.cost.cmp(&other.cost)
 		}
 	}
 
-	impl<C: Add<Output=C>, E> Add<TestCost<C, E>> for TestDistance<C, E> {
+	impl<C: Add<Output = C>, E> Add<TestCost<C, E>> for TestDistance<C, E> {
 		type Output = Self;
 		fn add(self, rhs: TestCost<C, E>) -> Self::Output {
-			TestDistance(self.0 + rhs.0, Some(rhs.1))
+			TestDistance {
+				cost: self.cost + rhs.0,
+				pred: Some(rhs.1),
+			}
 		}
 	}
 
@@ -116,27 +130,28 @@ mod tests {
 			let mut c = 0;
 			for e in g.edges() {
 				c = (c + 43) % 101;
-				*costs.get_mut(e) = Some(TestCost(c, e));
+				*costs.get_mut(e) = Some(c);
 			}
 			let costs = crate::map::Unwrap::new(costs);
 			// Start from each possible vertex in the graph.
 			for source in g.verts() {
-				let result = g.dijkstra(&costs, source, TestDistance(0, None));
-				assert_eq!(result.get(source).unwrap().0, 0);
-				assert!(result.get(source).unwrap().1.is_none());
+				let results = g.dijkstra(&|e| TestCost(*costs.get(e).borrow(), e), source, TestDistance::new(0));
+				assert_eq!(results.get(source).borrow().unwrap().cost, 0);
+				assert!(results.get(source).borrow().unwrap().pred.is_none());
 				// No edge should admit a relaxation.
 				for e in g.edges() {
-					let tail_result = result.get(g.tail(e));
-					let head_result = result.get(g.head(e));
-					if let Some(TestDistance(d, _)) = tail_result {
-						assert!(head_result.unwrap().0 <= d + costs.get(e).0);
+					if let Some(tail_result) = results.get(g.tail(e)).borrow() {
+						let head_result = results.get(g.head(e)).borrow().unwrap();
+						assert!(head_result.cost <= tail_result.cost + costs.get(e).borrow());
 					}
 				}
 				// Every vertex's distance should be correct.
 				for v in g.verts() {
-					if let Some(TestDistance(d, Some(e))) = *result.get(v) {
-						let tail_result = result.get(g.tail(e)).unwrap();
-						assert!(d == tail_result.0 + costs.get(e).0);
+					if let Some(head_result) = results.get(v).borrow() {
+						if let Some(e) = head_result.pred {
+							let tail_result = results.get(g.tail(e)).borrow().unwrap();
+							assert!(head_result.cost == tail_result.cost + costs.get(e).borrow());
+						}
 					}
 				}
 			}

@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use super::map::{self, Map};
 use crate::Digraph;
 
@@ -21,7 +23,7 @@ impl<'a, From: Digraph, To: Digraph> Homomorphism<'a, From, To> {
 
 	/// Maps a vertex from one graph to another.
 	pub fn map_vert(&self, v: From::Vert) -> To::Vert {
-		*self.vert_map.get(v)
+		*self.vert_map.get(v).borrow()
 	}
 
 	/// A mapping from edges of one graph to edges of another.
@@ -31,6 +33,6 @@ impl<'a, From: Digraph, To: Digraph> Homomorphism<'a, From, To> {
 
 	/// Maps an edge from one graph to another.
 	pub fn map_edge(&self, e: From::Edge) -> To::Edge {
-		*self.edge_map.get(e)
+		*self.edge_map.get(e).borrow()
 	}
 }

@@ -4,7 +4,7 @@ use crate::{
 	Digraph, InGraph, InsertGraph, OutGraph,
 };
 
-use std::collections::HashSet;
+use std::{borrow::Borrow, collections::HashSet};
 
 use proptest::{
 	arbitrary::Arbitrary,
@@ -118,12 +118,12 @@ fn assert_ephemeral_vert_map_works(g: &impl Digraph) {
 	// Build an identity mapping.
 	let mut map = g.ephemeral_vert_map(None);
 	for v in g.verts() {
-		assert_eq!(*map.get(v), None);
+		assert_eq!(*map.get(v).borrow(), None);
 		*map.get_mut(v) = Some(v);
 	}
 	// Verify the set values are retained.
 	for v in g.verts() {
-		assert_eq!(*map.get(v), Some(v));
+		assert_eq!(*map.get(v).borrow(), Some(v));
 	}
 }
 
@@ -131,12 +131,12 @@ fn assert_ephemeral_edge_map_works(g: &impl Digraph) {
 	// Build an identity mapping.
 	let mut map = g.ephemeral_edge_map(None);
 	for e in g.edges() {
-		assert_eq!(*map.get(e), None);
+		assert_eq!(*map.get(e).borrow(), None);
 		*map.get_mut(e) = Some(e);
 	}
 	// Verify the set values are retained.
 	for e in g.edges() {
-		assert_eq!(*map.get(e), Some(e));
+		assert_eq!(*map.get(e).borrow(), Some(e));
 	}
 }
 
@@ -202,16 +202,16 @@ pub fn assert_vert_map_works(mut g: impl InsertGraph) {
 	// Build an identity mapping.
 	let mut map = g.vert_map(None);
 	for v in g.verts() {
-		assert_eq!(*map.get(v), None);
+		assert_eq!(*map.get(v).borrow(), None);
 		*map.get_mut(v) = Some(v);
 	}
 	// Modify the graph.
 	let v_prime = g.insert_vert();
-	assert_eq!(*map.get(v_prime), None);
+	assert_eq!(*map.get(v_prime).borrow(), None);
 	*map.get_mut(v_prime) = Some(v_prime);
 	// Verify the set values are retained.
 	for v in g.verts() {
-		assert_eq!(*map.get(v), Some(v));
+		assert_eq!(*map.get(v).borrow(), Some(v));
 	}
 }
 
@@ -219,17 +219,17 @@ pub fn assert_edge_map_works(mut g: impl InsertGraph) {
 	// Build an identity mapping.
 	let mut map = g.edge_map(None);
 	for e in g.edges() {
-		assert_eq!(*map.get(e), None);
+		assert_eq!(*map.get(e).borrow(), None);
 		*map.get_mut(e) = Some(e);
 	}
 	// Modify the graph.
 	let v_prime = g.insert_vert();
 	let e_prime = g.insert_edge(v_prime, v_prime);
-	assert_eq!(*map.get(e_prime), None);
+	assert_eq!(*map.get(e_prime).borrow(), None);
 	*map.get_mut(e_prime) = Some(e_prime);
 	// Verify the set values are retained.
 	for e in g.edges() {
-		assert_eq!(*map.get(e), Some(e));
+		assert_eq!(*map.get(e).borrow(), Some(e));
 	}
 }
 

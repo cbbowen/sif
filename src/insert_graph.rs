@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use super::{
 	map::{self, Map, MapMut},
 	Digraph,
@@ -32,8 +34,8 @@ pub trait InsertGraph: Default + Digraph {
 		for e in from.edges() {
 			let (tail, head) = from.endpoints(e);
 			*emap.get_mut(e) = Some(to.insert_edge(
-				vmap.get(tail).expect("tail in verts"),
-				vmap.get(head).expect("head in verts"),
+				vmap.get(tail).borrow().expect("tail in verts"),
+				vmap.get(head).borrow().expect("head in verts"),
 			));
 		}
 		(
