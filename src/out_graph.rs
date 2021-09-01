@@ -46,10 +46,9 @@ pub trait OutGraph: Digraph {
 			*distances.get_mut(v) = Some(d.clone());
 			for e in self.out_edges(v) {
 				let u = self.head(e);
-				if distances.get(u).borrow().is_some() {
-					continue;
+				if distances.get(u).borrow().is_none() {
+					queue.try_decrease(u, d.clone() + costs.get(e).borrow().clone());
 				}
-				queue.try_decrease(u, d.clone() + costs.get(e).borrow().clone());
 			}
 		}
 		distances
