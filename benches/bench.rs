@@ -1,3 +1,6 @@
+use std::borrow::Borrow;
+use std::fmt::Debug;
+
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use sif::*;
 
@@ -45,6 +48,14 @@ fn random_graph<G: InsertGraph>(mut rng: PCG32) -> G {
 	g
 }
 
+fn random_edge_costs<G: Digraph>(g: &G, mut rng: PCG32) -> G::EphemeralEdgeMap<'_, u32> {
+	let mut map = g.ephemeral_edge_map(0);
+	for e in g.edges() {
+		*map.get_mut(e) = rng.next().unwrap() % 100;
+	}
+	map
+}
+
 fn depth_first_out_benchmark_routine(g: &impl OutGraph) {
 	let mut start_tree = 0usize;
 	let mut end_tree = 0usize;
@@ -69,27 +80,67 @@ fn depth_first_out_benchmark_routine(g: &impl OutGraph) {
 	assert_eq!(open_edge + cross_edge + back_edge, g.edges().count());
 }
 
+fn dijkstra_out_benchmark_routine<G: OutGraph, M: Map<G::Edge>>(g: &G, costs: &M, zero: M::Value)
+where
+	M::Value: std::ops::Add<Output = M::Value> + Clone + Debug + Ord,
+{
+	if let Some(source) = g.verts().next() {
+		let distances = g.dijkstra(costs, source, zero.clone());
+		assert_eq!(*distances.get(source).borrow().as_ref().unwrap(), zero);
+	}
+}
+
 fn depth_first_out_benchmark(c: &mut Criterion) {
-	c.bench_function("DenseOutAdjacencyList", |b| {
+	let mut group = c.benchmark_group("depth_first");
+
+	group.bench_function("DenseOutAdjacencyList", |b| {
 		let g = random_graph::<DenseOutAdjacencyList>(PCG32::new());
 		b.iter(|| depth_first_out_benchmark_routine(black_box(&g)))
 	});
 
-	c.bench_function("DenseBiAdjacencyList", |b| {
+	group.bench_function("DenseBiAdjacencyList", |b| {
 		let g = random_graph::<DenseBiAdjacencyList>(PCG32::new());
 		b.iter(|| depth_first_out_benchmark_routine(black_box(&g)))
 	});
 
-	c.bench_function("SparseOutAdjacencyList", |b| {
+	group.bench_function("SparseOutAdjacencyList", |b| {
 		let g = random_graph::<SparseOutAdjacencyList>(PCG32::new());
 		b.iter(|| depth_first_out_benchmark_routine(black_box(&g)))
 	});
 
-	c.bench_function("SparseBiAdjacencyList", |b| {
+	group.bench_function("SparseBiAdjacencyList", |b| {
 		let g = random_graph::<SparseBiAdjacencyList>(PCG32::new());
 		b.iter(|| depth_first_out_benchmark_routine(black_box(&g)))
 	});
 }
 
-criterion_group!(benches, depth_first_out_benchmark);
+fn dijkstra_out_benchmark(c: &mut Criterion) {
+	let mut group = c.benchmark_group("dijkstra");
+
+	group.bench_function("DenseOutAdjacencyList", |b| {
+		let g = random_graph::<DenseOutAdjacencyList>(PCG32::new());
+		let costs = random_edge_costs(&g, PCG32::new());
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+	});
+
+	group.bench_function("DenseBiAdjacencyList", |b| {
+		let g = random_graph::<DenseBiAdjacencyList>(PCG32::new());
+		let costs = random_edge_costs(&g, PCG32::new());
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+	});
+
+	group.bench_function("SparseOutAdjacencyList", |b| {
+		let g = random_graph::<SparseOutAdjacencyList>(PCG32::new());
+		let costs = random_edge_costs(&g, PCG32::new());
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+	});
+
+	group.bench_function("SparseBiAdjacencyList", |b| {
+		let g = random_graph::<SparseBiAdjacencyList>(PCG32::new());
+		let costs = random_edge_costs(&g, PCG32::new());
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+	});
+}
+
+criterion_group!(benches, depth_first_out_benchmark, dijkstra_out_benchmark);
 criterion_main!(benches);
