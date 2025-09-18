@@ -1,7 +1,7 @@
 use super::sparse;
 use crate::{
 	map::{Map, MapMut},
-	Digraph, InGraph, InsertGraph, OutGraph,
+	Digraph, Homomorphism, InGraph, InsertGraph, OutGraph,
 };
 
 use std::{borrow::Borrow, collections::HashSet};

@@ -99,7 +99,7 @@ impl<G: Digraph> From<&G> for DenseOutAdjacencyList {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::model::test_graph::*;
+	use crate::{Homomorphism, model::test_graph::*};
 	use proptest::proptest;
 
 	proptest! {

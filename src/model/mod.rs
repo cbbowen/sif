@@ -1,3 +1,7 @@
+pub(crate) mod index;
+mod key;
+pub mod isomorphic_from;
+
 mod dense;
 pub mod dense_bi_adjacency_list;
 pub mod dense_edge_list;
@@ -5,8 +9,7 @@ pub mod dense_in_adjacency_list;
 pub mod dense_out_adjacency_list;
 pub mod immutable_in_adjacency_list;
 pub mod immutable_out_adjacency_list;
-pub(crate) mod index;
-mod key;
+
 mod sparse;
 pub mod sparse_bi_adjacency_list;
 pub mod sparse_edge_list;

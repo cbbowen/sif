@@ -1,11 +1,10 @@
 use std::borrow::Borrow;
 
 use super::{
-	map::{self, Map, MapMut},
+	map::{Map, MapMut},
 	Digraph,
+	model::isomorphic_from::IsomorphicFrom,
 };
-
-use crate::Homomorphism;
 
 /// Represents a directed graph into which new vertices and edge can be
 /// inserted.
@@ -24,7 +23,7 @@ pub trait InsertGraph: Default + Digraph {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: Digraph>(from: &G) -> (Self, Homomorphism<'_, G, Self>) {
+	fn isomorphic_from<G: Digraph>(from: &G) -> (Self, IsomorphicFrom<'_, G, Self>) {
 		let mut to = Self::default();
 		let mut vmap = from.ephemeral_vert_map(None);
 		for v in from.verts() {
@@ -40,7 +39,7 @@ pub trait InsertGraph: Default + Digraph {
 		}
 		(
 			to,
-			Homomorphism::new(map::Unwrap::new(vmap), map::Unwrap::new(emap)),
+			IsomorphicFrom::new(vmap, emap),
 		)
 	}
 }
