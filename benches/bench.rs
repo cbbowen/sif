@@ -37,10 +37,11 @@ impl Iterator for PCG32 {
 fn random_graph<G: InsertGraph>(mut rng: PCG32) -> G {
 	let mut g = G::default();
 	let mut verts = Vec::new();
-	for _ in 0..100 {
+	let n = 100;
+	for _ in 0..n {
 		verts.push(g.insert_vert());
 	}
-	for _ in 0..1000 {
+	for _ in 0..(n * n / 2) {
 		g.insert_edge(
 			verts[rng.next().unwrap() as usize % verts.len()],
 			verts[rng.next().unwrap() as usize % verts.len()],
@@ -81,11 +82,12 @@ fn depth_first_out_benchmark_routine(g: &impl OutGraph) {
 	assert_eq!(open_edge + cross_edge + back_edge, g.edges().count());
 }
 
-fn dijkstra_out_benchmark_routine<G: OutGraph, M: Map<G::Edge>>(g: &G, costs: &M, zero: M::Value)
+fn dijkstra_out_benchmark_routine<G: OutGraph, M: Map<G::Edge>>(g: &G, costs: &M)
 where
-	M::Value: std::ops::Add<Output = M::Value> + Clone + Debug + Ord,
+	M::Value: Default + std::ops::Add<Output = M::Value> + Clone + Debug + Ord,
 {
 	if let Some(source) = g.verts().next() {
+		let zero = M::Value::default();
 		let distances = g.dijkstra(costs, source, zero.clone());
 		assert_eq!(*distances.get(source).borrow().as_ref().unwrap(), zero);
 	}
@@ -121,25 +123,25 @@ fn dijkstra_out_benchmark(c: &mut Criterion) {
 	group.bench_function("DenseOutAdjacencyList", |b| {
 		let g = random_graph::<DenseOutAdjacencyList>(PCG32::new());
 		let costs = random_edge_costs(&g, PCG32::new());
-		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs)))
 	});
 
 	group.bench_function("DenseBiAdjacencyList", |b| {
 		let g = random_graph::<DenseBiAdjacencyList>(PCG32::new());
 		let costs = random_edge_costs(&g, PCG32::new());
-		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs)))
 	});
 
 	group.bench_function("SparseOutAdjacencyList", |b| {
 		let g = random_graph::<SparseOutAdjacencyList>(PCG32::new());
 		let costs = random_edge_costs(&g, PCG32::new());
-		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs)))
 	});
 
 	group.bench_function("SparseBiAdjacencyList", |b| {
 		let g = random_graph::<SparseBiAdjacencyList>(PCG32::new());
 		let costs = random_edge_costs(&g, PCG32::new());
-		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs), 0))
+		b.iter(|| dijkstra_out_benchmark_routine(black_box(&g), black_box(&costs)))
 	});
 }
 
