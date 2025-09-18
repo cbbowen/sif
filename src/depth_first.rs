@@ -19,17 +19,12 @@ pub enum DepthFirstEvent<G: Digraph + ?Sized> {
 	CloseEdge(G::Edge),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum DepthFirstVisited {
+	#[default]
 	No,
 	Open,
 	Closed,
-}
-
-impl Default for DepthFirstVisited {
-	fn default() -> Self {
-		DepthFirstVisited::No
-	}
 }
 
 /// Iterator that performs a depth-first graph traversal.

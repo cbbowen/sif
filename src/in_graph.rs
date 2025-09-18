@@ -5,7 +5,7 @@ use std::borrow::Borrow;
 /// iterated.
 pub trait InGraph: Digraph {
 	/// An iterator over in-adjacencies.
-	type InEdges<'a>: Clone + Iterator<Item = Self::Edge>;
+	type InEdges<'a>: Clone + Iterator<Item = Self::Edge> where Self: 'a;
 
 	/// Returns an iterator over the in-adjacencies of a vertex, that is, the
 	/// edges with a given head.

@@ -137,9 +137,9 @@ mod tests {
 	impl<K: Eq + Hash, T: Clone> crate::Map<K> for TestMap<K, T> {
 		type Value = T;
 		type Ref<'a>
+			= &'a T
 		where
-			T: 'a,
-		= &'a T;
+			Self: 'a;
 		fn get<'a>(&'a self, k: K) -> Self::Ref<'a>
 		where
 			T: 'a,
@@ -150,9 +150,9 @@ mod tests {
 
 	impl<K: Eq + Hash, T: Clone> crate::MapMut<K> for TestMap<K, T> {
 		type RefMut<'a>
+			= &'a mut T
 		where
-			T: 'a,
-		= &'a mut T;
+			Self: 'a;
 		fn get_mut<'a>(&'a mut self, k: K) -> Self::RefMut<'a> {
 			let default = &self.default;
 			self.map.entry(k).or_insert_with(|| default.clone())

@@ -11,7 +11,7 @@ pub trait Map<K> {
 	/// A type which borrows a value.
 	type Ref<'a>: Borrow<Self::Value>
 	where
-		Self::Value: 'a;
+		Self: 'a;
 
 	/// Borrows the value associated with a key.
 	fn get<'a>(&'a self, k: K) -> Self::Ref<'a>
@@ -22,9 +22,9 @@ pub trait Map<K> {
 impl<K, T, F: Fn(K) -> T> Map<K> for F {
 	type Value = T;
 	type Ref<'a>
+		= Self::Value
 	where
-		Self::Value: 'a,
-	= Self::Value;
+		Self: 'a;
 
 	fn get<'a>(&'a self, k: K) -> Self::Ref<'a>
 	where
@@ -39,7 +39,7 @@ pub trait MapMut<K>: Map<K> {
 	/// A type which can be dereferenced to a mutable value.
 	type RefMut<'a>: DerefMut<Target = Self::Value>
 	where
-		Self::Value: 'a;
+		Self: 'a;
 
 	/// Returns a mutable reference to the value associated with a key.
 	fn get_mut(&mut self, k: K) -> Self::RefMut<'_>;
@@ -68,9 +68,9 @@ impl<K, T: Copy, M: Map<K, Value = Option<T>>> Map<K> for Unwrap<M> {
 	type Value = T;
 
 	type Ref<'a>
+		= UnwrapRef<M::Ref<'a>, Self::Value>
 	where
-		Self::Value: 'a,
-	= UnwrapRef<M::Ref<'a>, Self::Value>;
+		Self: 'a;
 
 	fn get<'a>(&'a self, k: K) -> Self::Ref<'a>
 	where

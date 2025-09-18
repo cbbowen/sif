@@ -125,7 +125,7 @@ impl ImmutableOutAdjacencyList {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: OutGraph>(from: &G) -> (Self, Homomorphism<G, Self>) {
+	fn isomorphic_from<G: OutGraph>(from: &G) -> (Self, Homomorphism<'_, G, Self>) {
 		let mut vmap = from.ephemeral_vert_map(None);
 		for (order, v) in from.verts().enumerate() {
 			*vmap.get_mut(v) = Some(order.into());

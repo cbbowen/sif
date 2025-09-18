@@ -54,7 +54,9 @@ pub trait Digraph {
 	}
 
 	/// An iterator over all vertices.
-	type Verts<'a>: Clone + Iterator<Item = Self::Vert>;
+	type Verts<'a>: Clone + Iterator<Item = Self::Vert>
+	where
+		Self: 'a;
 
 	/// Returns an iterator over all vertices.
 	///
@@ -68,7 +70,9 @@ pub trait Digraph {
 	fn verts(&self) -> Self::Verts<'_>;
 
 	/// An iterator over all edges.
-	type Edges<'a>: Clone + Iterator<Item = Self::Edge>;
+	type Edges<'a>: Clone + Iterator<Item = Self::Edge>
+	where
+		Self: 'a;
 
 	/// Returns an iterator over all edges.
 	///
@@ -159,7 +163,7 @@ pub trait Digraph {
 
 	/// A mutable map from vertices to values that requires the graph remain
 	/// immutable for its lifetime.
-	type EphemeralVertMap<'a, T: Clone>: MapMut<Self::Vert, Value = T> = Self::VertMap<T>;
+	type EphemeralVertMap<'a, T: Clone>: MapMut<Self::Vert, Value = T> = Self::VertMap<T> where Self: 'a;
 
 	/// Constructs a new mutable mapping from vertices to values with all vertices
 	/// initially mapped to the given default. The mapping may not outlive the
@@ -197,7 +201,7 @@ pub trait Digraph {
 
 	/// A mutable map from edges to values that requires the graph remain
 	/// immutable for its lifetime.
-	type EphemeralEdgeMap<'a, T: Clone>: MapMut<Self::Edge, Value = T> = Self::EdgeMap<T>;
+	type EphemeralEdgeMap<'a, T: Clone>: MapMut<Self::Edge, Value = T> = Self::EdgeMap<T> where Self: 'a;
 
 	/// Constructs a new mutable mapping from edges to values with all edges
 	/// initially mapped to the given default. The mapping may not outlive the
@@ -298,12 +302,12 @@ impl<'g, G: Digraph> Digraph for &'g G {
 		(**self).head(e)
 	}
 
-	type Verts<'a> = G::Verts<'a>;
+	type Verts<'a> = G::Verts<'a> where Self: 'a;
 	fn verts(&self) -> Self::Verts<'_> {
 		(**self).verts()
 	}
 
-	type Edges<'a> = G::Edges<'a>;
+	type Edges<'a> = G::Edges<'a> where Self: 'a;
 	fn edges(&self) -> Self::Edges<'_> {
 		(**self).edges()
 	}

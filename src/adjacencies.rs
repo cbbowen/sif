@@ -5,7 +5,7 @@ use crate::{Digraph, InGraph, OutGraph};
 /// Adjacencies of a graph.
 pub trait Adjacencies<G: Digraph + ?Sized> {
 	/// Iterator over the adjacencies of a vertex.
-	type Of<'a>: Clone + Iterator<Item = G::Edge>;
+	type Of<'a>: Clone + Iterator<Item = G::Edge> where G: 'a;
 
 	/// Returns edges adjacent to a vertes.
 	fn of(g: &G, v: G::Vert) -> Self::Of<'_>;
@@ -23,7 +23,7 @@ pub trait Adjacencies<G: Digraph + ?Sized> {
 pub struct OutAdjacencies;
 
 impl<G: OutGraph + ?Sized> Adjacencies<G> for OutAdjacencies {
-	type Of<'a> = G::OutEdges<'a>;
+	type Of<'a> = G::OutEdges<'a> where G: 'a;
 
 	fn of(g: &G, v: G::Vert) -> Self::Of<'_> {
 		g.out_edges(v)
@@ -42,7 +42,7 @@ impl<G: OutGraph + ?Sized> Adjacencies<G> for OutAdjacencies {
 pub struct InAdjacencies;
 
 impl<G: InGraph + ?Sized> Adjacencies<G> for InAdjacencies {
-	type Of<'a> = G::InEdges<'a>;
+	type Of<'a> = G::InEdges<'a> where G: 'a;
 
 	fn of(g: &G, v: G::Vert) -> Self::Of<'_> {
 		g.in_edges(v)

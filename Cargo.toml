@@ -9,11 +9,11 @@ edition = "2018"
 sif_index_niche = []
 
 [dependencies]
-itertools = "0.10.*"
+itertools = "0.14"
 
 [dev-dependencies]
-criterion = "0.3"
-proptest = "0.10.*"
+criterion = "0.7"
+proptest = "1.7"
 
 [[bench]]
 name = "bench"

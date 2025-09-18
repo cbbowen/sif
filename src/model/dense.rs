@@ -83,9 +83,9 @@ impl<K: Key, T: Clone> Map<K, T> {
 impl<K: Key, T: Clone> crate::Map<K> for Map<K, T> {
 	type Value = T;
 	type Ref<'a>
+		= &'a T
 	where
-		T: 'a,
-	= &'a T;
+		Self: 'a;
 	fn get<'a>(&'a self, k: K) -> Self::Ref<'a>
 	where
 		T: 'a,
@@ -97,9 +97,9 @@ impl<K: Key, T: Clone> crate::Map<K> for Map<K, T> {
 
 impl<K: Key, T: Clone> crate::MapMut<K> for Map<K, T> {
 	type RefMut<'a>
+		= &'a mut T
 	where
-		T: 'a,
-	= &'a mut T;
+		Self: 'a;
 	fn get_mut(&mut self, k: K) -> Self::RefMut<'_> {
 		let index = k.index();
 		if index >= self.values.len() {

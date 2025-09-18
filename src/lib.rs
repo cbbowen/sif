@@ -17,9 +17,7 @@
 
 #![warn(missing_docs)]
 #![feature(associated_type_defaults)]
-#![feature(generic_associated_types)]
-#![feature(map_first_last)]
-#![cfg_attr(sif_index_niche, feature(rustc_attrs))]
+#![cfg_attr(feature = "sif_index_niche", feature(rustc_attrs))]
 
 pub mod adjacencies;
 pub(crate) mod binary_heap;

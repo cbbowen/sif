@@ -52,12 +52,12 @@ impl<G0: Digraph, G1: Digraph> Digraph for (G0, G1) {
 		(self.0.head(e0), self.1.head(e1))
 	}
 
-	type Verts<'a> = Verts<'a, G0, G1>;
+	type Verts<'a> = Verts<'a, G0, G1> where Self: 'a;
 	fn verts(&self) -> Self::Verts<'_> {
 		self.0.verts().cartesian_product(self.1.verts())
 	}
 
-	type Edges<'a> = Edges<'a, G0, G1>;
+	type Edges<'a> = Edges<'a, G0, G1> where Self: 'a;
 	fn edges(&self) -> Self::Edges<'_> {
 		self.0.edges().cartesian_product(self.1.edges())
 	}
@@ -82,7 +82,7 @@ impl<G0: Digraph, G1: Digraph> Digraph for (G0, G1) {
 }
 
 impl<G0: OutGraph, G1: OutGraph> OutGraph for (G0, G1) {
-	type OutEdges<'a> = OutEdges<'a, G0, G1>;
+	type OutEdges<'a> = OutEdges<'a, G0, G1> where Self: 'a;
 
 	fn out_edges(&self, v: impl Borrow<Self::Vert>) -> Self::OutEdges<'_> {
 		let v = v.borrow();
@@ -94,7 +94,7 @@ impl<G0: OutGraph, G1: OutGraph> OutGraph for (G0, G1) {
 }
 
 impl<G0: InGraph, G1: InGraph> InGraph for (G0, G1) {
-	type InEdges<'a> = InEdges<'a, G0, G1>;
+	type InEdges<'a> = InEdges<'a, G0, G1> where Self: 'a;
 
 	fn in_edges(&self, v: impl Borrow<Self::Vert>) -> Self::InEdges<'_> {
 		let v = v.borrow();
