@@ -147,9 +147,25 @@ mod tests {
 
 		#[test]
 		fn bi_invariants(g0: TestGraph, g1: TestGraph) {
-			let g0_prime = crate::DenseBiAdjacencyList::from(&g0);
-			let g1_prime = crate::DenseBiAdjacencyList::from(&g1);
-			assert_all_bi_graph_invariants(&(g0_prime, g1_prime));
+			let g0 = crate::DenseBiAdjacencyList::from(&g0);
+			let g1 = crate::DenseBiAdjacencyList::from(&g1);
+			assert_all_bi_graph_invariants(&(g0, g1));
 		}
+
+		// If itertools::Product implemented ExactSizeIterator, we could enable this test.
+		// #[test]
+		// fn out_degree(g0: TestGraph, g1: TestGraph) {
+		// 	let g0 = crate::DenseOutAdjacencyList::from(&g0);
+		// 	let g1 = crate::DenseOutAdjacencyList::from(&g1);
+		// 	assert_out_degree_works(&(g0, g1));
+		// }
+
+		// If itertools::Product implemented ExactSizeIterator, we could enable this test.
+		// #[test]
+		// fn in_degree(g0: TestGraph, g1: TestGraph) {
+		// 	let g0 = crate::DenseInAdjacencyList::from(&g0);
+		// 	let g1 = crate::DenseInAdjacencyList::from(&g1);
+		// 	assert_in_degree_works(&(g0, g1));
+		// }
 	}
 }

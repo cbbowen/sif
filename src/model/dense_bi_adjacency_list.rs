@@ -136,5 +136,12 @@ mod tests {
 			let g_prime = DenseBiAdjacencyList::from(&g);
 			assert_edge_map_works(g_prime);
 		}
+
+		#[test]
+		fn degrees(g: TestGraph) {
+			let g = DenseBiAdjacencyList::from(&g);
+			assert_out_degree_works(&g);
+			assert_in_degree_works(&g);
+		}
 	}
 }

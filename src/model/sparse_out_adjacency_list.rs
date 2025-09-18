@@ -148,5 +148,11 @@ mod tests {
 				assert_all_out_graph_invariants(&g_prime);
 			}
 		}
+
+		#[test]
+		fn out_degree(g: TestGraph) {
+			let g = SparseOutAdjacencyList::from(&g);
+			assert_out_degree_works(&g);
+		}
 	}
 }

@@ -194,5 +194,12 @@ mod tests {
 				assert_all_bi_graph_invariants(&g_prime);
 			}
 		}
+
+		#[test]
+		fn degrees(g: TestGraph) {
+			let g = SparseBiAdjacencyList::from(&g);
+			assert_out_degree_works(&g);
+			assert_in_degree_works(&g);
+		}
 	}
 }

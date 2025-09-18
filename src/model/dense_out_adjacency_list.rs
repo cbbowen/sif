@@ -126,5 +126,11 @@ mod tests {
 			let g_prime = DenseOutAdjacencyList::from(&g);
 			assert_edge_map_works(g_prime);
 		}
+
+		#[test]
+		fn out_degree(g: TestGraph) {
+			let g = DenseOutAdjacencyList::from(&g);
+			assert_out_degree_works(&g);
+		}
 	}
 }

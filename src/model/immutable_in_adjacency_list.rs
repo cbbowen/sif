@@ -178,5 +178,12 @@ mod tests {
 			let g_prime = ImmutableInAdjacencyList::from(&g_in);
 			assert_all_in_graph_invariants(&g_prime);
 		}
+
+		#[test]
+		fn in_degree(g: TestGraph) {
+			let g_in = crate::DenseInAdjacencyList::from(&g);
+			let g_prime = ImmutableInAdjacencyList::from(&g_in);
+			assert_in_degree_works(&g_prime);
+		}
 	}
 }

@@ -30,6 +30,7 @@ pub mod map;
 pub(crate) mod model;
 mod out_graph;
 
+/// Module containing utilities for testing non-uniform cost search algorithms.
 #[cfg(test)]
 pub mod test_distance;
 
@@ -38,8 +39,8 @@ pub(crate) use binary_heap::BinaryHeap;
 pub use depth_first::*;
 pub use digraph::{Digraph, ExactOrderDigraph, ExactSizeDigraph};
 pub use homomorphism::*;
-pub use in_graph::InGraph;
+pub use in_graph::{ExactInDegreeDigraph, InGraph};
 pub use insert_graph::InsertGraph;
 pub use map::{Map, MapMut};
 pub use model::*;
-pub use out_graph::OutGraph;
+pub use out_graph::{ExactOutDegreeDigraph, OutGraph};

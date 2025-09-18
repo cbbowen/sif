@@ -17,6 +17,7 @@ pub mod sparse_in_adjacency_list;
 pub mod sparse_out_adjacency_list;
 pub mod tensor_product;
 
+/// Module containing utilities for testing graph data structures and algorithms.
 #[cfg(test)]
 pub mod test_graph;
 

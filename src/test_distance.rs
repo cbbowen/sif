@@ -1,11 +1,15 @@
 use std::ops::Add;
 
+/// A test cost associated with an edge.
 #[derive(Debug, Clone, Copy)]
 pub struct TestCost<C, E>(pub C, pub E);
 
+/// A test distance that includes the edge used to reach the current vertex.
 #[derive(Debug, Clone, Copy)]
 pub struct TestDistance<C, E> {
+	/// The total cost to reach the current vertex.
 	pub cost: C,
+	/// The edge used to reach the current vertex or `None` if this is the initial distance.
 	pub pred: Option<E>,
 }
 
@@ -24,6 +28,7 @@ impl<C: PartialEq, E> PartialEq for TestDistance<C, E> {
 impl<C: Eq, E> Eq for TestDistance<C, E> {}
 
 impl<C, E> TestDistance<C, E> {
+	/// Constructs a new `TestDistance` with the given cost and no predecessor edge.
 	pub fn new(cost: C) -> Self {
 		TestDistance { cost, pred: None }
 	}

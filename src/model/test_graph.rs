@@ -1,6 +1,7 @@
 use super::sparse;
 use crate::{
-	Digraph, Homomorphism, InGraph, InsertGraph, OutGraph,
+	Digraph, ExactInDegreeDigraph, ExactOutDegreeDigraph, Homomorphism, InGraph, InsertGraph,
+	OutGraph,
 	map::{Map, MapMut},
 };
 
@@ -14,6 +15,7 @@ use proptest::{
 type Vert = usize;
 type Edge = usize;
 
+/// A simple test graph implementation for use in property tests.
 #[derive(Default, Debug, Clone)]
 pub struct TestGraph {
 	order: Vert,
@@ -174,6 +176,7 @@ fn assert_in_graph_invariants(g: &impl InGraph) {
 	assert_in_edges_works(g);
 }
 
+/// Asserts all invariants of a directed graph.
 pub fn assert_all_digraph_invariants(g: &impl Digraph) {
 	assert_endpoints_works(g);
 	assert_verts_works(g);
@@ -182,22 +185,26 @@ pub fn assert_all_digraph_invariants(g: &impl Digraph) {
 	assert_ephemeral_edge_map_works(g);
 }
 
+/// Asserts all invariants of an out-graph.
 pub fn assert_all_out_graph_invariants(g: &impl OutGraph) {
 	assert_all_digraph_invariants(g);
 	assert_out_graph_invariants(g);
 }
 
+/// Asserts all invariants of an in-graph.
 pub fn assert_all_in_graph_invariants(g: &impl InGraph) {
 	assert_all_digraph_invariants(g);
 	assert_in_graph_invariants(g);
 }
 
+/// Asserts all invariants of a bi-graph.
 pub fn assert_all_bi_graph_invariants(g: &(impl OutGraph + InGraph)) {
 	assert_all_digraph_invariants(g);
 	assert_out_graph_invariants(g);
 	assert_in_graph_invariants(g);
 }
 
+/// Asserts that a vert map works correctly.
 pub fn assert_vert_map_works(mut g: impl InsertGraph) {
 	// Build an identity mapping.
 	let mut map = g.vert_map(None);
@@ -215,6 +222,7 @@ pub fn assert_vert_map_works(mut g: impl InsertGraph) {
 	}
 }
 
+/// Asserts that an edge map works correctly.
 pub fn assert_edge_map_works(mut g: impl InsertGraph) {
 	// Build an identity mapping.
 	let mut map = g.edge_map(None);
@@ -230,6 +238,20 @@ pub fn assert_edge_map_works(mut g: impl InsertGraph) {
 	// Verify the set values are retained.
 	for e in g.edges() {
 		assert_eq!(*map.get(e).borrow(), Some(e));
+	}
+}
+
+/// Asserts that the out-degree function works correctly.
+pub fn assert_out_degree_works(g: &impl ExactOutDegreeDigraph) {
+	for v in g.verts() {
+		assert_eq!(g.out_degree(v), g.out_edges(v).count());
+	}
+}
+
+/// Asserts that the in-degree function works correctly.
+pub fn assert_in_degree_works(g: &impl ExactInDegreeDigraph) {
+	for v in g.verts() {
+		assert_eq!(g.in_degree(v), g.in_edges(v).count());
 	}
 }
 
