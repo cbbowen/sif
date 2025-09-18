@@ -88,7 +88,7 @@ where
 {
 	if let Some(source) = g.verts().next() {
 		let zero = M::Value::default();
-		let distances = g.dijkstra(costs, source, zero.clone());
+		let distances = g.dijkstra_from(costs, source, zero.clone());
 		assert_eq!(*distances.get(source).borrow().as_ref().unwrap(), zero);
 	}
 }

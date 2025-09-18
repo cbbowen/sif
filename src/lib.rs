@@ -30,6 +30,9 @@ pub mod map;
 pub(crate) mod model;
 mod out_graph;
 
+#[cfg(test)]
+pub mod test_distance;
+
 pub use adjacencies::*;
 pub(crate) use binary_heap::BinaryHeap;
 pub use depth_first::*;
