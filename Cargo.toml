@@ -3,7 +3,7 @@ name = "sif"
 version = "0.1.0"
 authors = ["Chris Bowen <4783294+cbbowen@users.noreply.github.com>"]
 license = "MIT"
-edition = "2018"
+edition = "2024"
 
 [features]
 sif_index_niche = []

@@ -1,7 +1,8 @@
 use std::borrow::Borrow;
 use std::fmt::Debug;
+use std::hint::black_box;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 use sif::*;
 
 struct PCG32 {
