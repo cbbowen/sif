@@ -1,8 +1,8 @@
 use std::borrow::Borrow;
 
 use crate::{
-	map::{Map, Unwrap},
 	Digraph, Homomorphism,
+	map::{Map, Unwrap},
 };
 
 pub struct IsomorphicFrom<'a, From: Digraph + 'a, To: Digraph + 'a> {

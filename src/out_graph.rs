@@ -58,7 +58,7 @@ where
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::{DenseOutAdjacencyList, model::test_graph::*, map::MapMut, test_distance::*};
+	use crate::{DenseOutAdjacencyList, map::MapMut, model::test_graph::*, test_distance::*};
 	use proptest::proptest;
 
 	proptest! {

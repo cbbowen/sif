@@ -1,7 +1,7 @@
 //! Module implementing a sparse in-adjacency list.
 
 use std::borrow::Borrow;
-use std::collections::{hash_set, HashSet};
+use std::collections::{HashSet, hash_set};
 
 use crate::{Digraph, InGraph, InsertGraph};
 

@@ -1,5 +1,5 @@
-use crate::model::index::Index;
 use crate::MapMut;
+use crate::model::index::Index;
 use std::borrow::Borrow;
 use std::marker::PhantomData;
 

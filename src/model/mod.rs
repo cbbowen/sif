@@ -1,6 +1,6 @@
 pub(crate) mod index;
+pub(crate) mod isomorphic_from;
 mod key;
-pub mod isomorphic_from;
 
 mod dense;
 pub mod dense_bi_adjacency_list;

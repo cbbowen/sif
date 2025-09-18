@@ -1,8 +1,10 @@
 use std::borrow::Borrow;
 
+use crate::Homomorphism;
+
 use super::{
-	map::{Map, MapMut},
 	Digraph,
+	map::{Map, MapMut},
 	model::isomorphic_from::IsomorphicFrom,
 };
 
@@ -23,7 +25,10 @@ pub trait InsertGraph: Default + Digraph {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: Digraph>(from: &G) -> (Self, IsomorphicFrom<'_, G, Self>) {
+	fn isomorphic_from<'a, G: Digraph>(from: &'a G) -> (Self, impl Homomorphism<G, Self>)
+	where
+		Self: 'a,
+	{
 		let mut to = Self::default();
 		let mut vmap = from.ephemeral_vert_map(None);
 		for v in from.verts() {
@@ -37,9 +42,6 @@ pub trait InsertGraph: Default + Digraph {
 				vmap.get(head).borrow().expect("head in verts"),
 			));
 		}
-		(
-			to,
-			IsomorphicFrom::new(vmap, emap),
-		)
+		(to, IsomorphicFrom::new(vmap, emap))
 	}
 }

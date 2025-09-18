@@ -6,4 +6,4 @@ Library of data structures and algorithms for working with directed graphs.
 
 Benchmarks: `cargo bench`
 
-Benchmarks w/ flamegraph: `cargo flamegraph --image-width=2048 --reverse --bench bench -- --bench --noplot dijkstra/DenseOutAdjacencyList`
+Benchmarks w/ flamegraph: `cargo flamegraph --image-width=2048 --bench bench -- --bench --noplot dijkstra/DenseOutAdjacencyList`

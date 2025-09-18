@@ -6,8 +6,8 @@ use itertools::{Itertools, MapInto};
 use std::ops::Range;
 
 use crate::{
-	map::{Map, MapMut},
 	Digraph, Homomorphism, InGraph,
+	map::{Map, MapMut},
 	model::isomorphic_from::IsomorphicFrom,
 };
 
@@ -126,7 +126,10 @@ impl ImmutableInAdjacencyList {
 	/// Constructs a graph isomorphic to the given graph and returns it along with
 	/// mappings from the given graph's vertices and edges to those in the new
 	/// graph.
-	fn isomorphic_from<G: InGraph>(from: &G) -> (Self, IsomorphicFrom<'_, G, Self>) {
+	fn isomorphic_from<'a, G: InGraph>(from: &'a G) -> (Self, impl Homomorphism<G, Self>)
+	where
+		Self: 'a,
+	{
 		let mut vmap = from.ephemeral_vert_map(None);
 		for (order, v) in from.verts().enumerate() {
 			*vmap.get_mut(v) = Some(order.into());
@@ -145,10 +148,7 @@ impl ImmutableInAdjacencyList {
 		}
 		ins.insert(tails.len().into());
 		let g = ImmutableInAdjacencyList { ins, tails };
-		(
-			g,
-			IsomorphicFrom::new(vmap, emap),
-		)
+		(g, IsomorphicFrom::new(vmap, emap))
 	}
 }
 
